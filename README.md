@@ -3,8 +3,6 @@ gpuview - Flask & Vue
 
 ## Fetures
 
----
-
 ### Refactored with Flask
 
 This version has been refactored to use Flask, a lightweight and flexible web framework for Python, providing a robust and scalable backend.
