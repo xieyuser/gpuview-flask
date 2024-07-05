@@ -1,4 +1,4 @@
-gpuview - Flask & Vue
+gpuview-flask
 ---------------------
 
 ## Fetures
@@ -22,11 +22,11 @@ An automatic refresh feature has been added for users, ensuring that they always
 This combination of technologies and improvements makes the application more modern, responsive, and efficient, providing a better overall experience for users.
 
 ---
+This version includes modifications based on the original [gpuview](https://github.com/fgaim/gpuview).
 
-[![LICENSE](https://img.shields.io/github/license/fgaim/gpuview.svg)](https://github.com/fgaim/gpuview/blob/master/LICENSE)
-![GitHub issues](https://img.shields.io/github/issues/fgaim/gpuview.svg)
-[![PyPI](https://img.shields.io/pypi/v/gpuview.svg)](https://pypi.org/project/gpuview/)
-[![CircleCI](https://circleci.com/gh/fgaim/gpuview.svg?style=shield)](https://circleci.com/gh/fgaim/gpuview)
+
+[![LICENSE](https://img.shields.io/github/license/bei9/gpuview-flask.svg)](https://github.com/bei9/gpuview-flask/blob/master/LICENSE)
+![GitHub issues](https://img.shields.io/github/issues/bei9/gpuview-flask.svg)
 
 GPU is an expensive resource, and deep learning practitioners have to monitor the
 health and usage of their GPUs, such as the temperature, memory, utilization, and the users.
