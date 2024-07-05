@@ -9,15 +9,15 @@ def read_readme():
 
 
 setuptools.setup(
-    name='gpuview',
+    name='gpuview-flask',
     version=__version__,
     license='MIT',
     description='A lightweight web dashboard for monitoring GPU usage',
     long_description=read_readme(),
     long_description_content_type="text/markdown",
-    url='https://github.com/fgaim/gpuview',
-    author='Fitsum Gaim',
-    author_email='fitsum@geezlab.com',
+    url='https://github.com/bei9/gpuview-flask',
+    author='Bei9',
+    author_email='laujoyce@vip.qq.com',
     keywords='gpu web-monitoring',
     classifiers=[
         'Development Status :: 3 - Alpha',
@@ -28,7 +28,7 @@ setuptools.setup(
         'Topic :: System :: Monitoring',
     ],
     packages=['gpuview'],
-    install_requires=['gpustat>=0.5.0', 'bottle>=0.12.14'],
+    install_requires=['gpustat>=0.5.0', 'flask', 'flask_caching'],
     extras_require={'test': ['pytest']},
     setup_requires=['pytest-runner'],
     tests_require=['pytest'],
