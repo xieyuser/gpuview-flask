@@ -8,19 +8,59 @@
     <meta name="description" content="">
     <meta name="author" content="">
     <title>gpuview</title>
-    <script src="https://cdn.bootcdn.net/ajax/libs/vue/2.6.14/vue.js"></script>
-    <script src="https://cdn.bootcdn.net/ajax/libs/axios/1.7.2/axios.min.js"></script>
-    <link href="https://cdn.bootcdn.net/ajax/libs/twitter-bootstrap/4.0.0/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://cdn.bootcdn.net/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
-    <link href="https://cdn.bootcdn.net/ajax/libs/datatables/1.10.16/css/dataTables.bootstrap4.min.css"
-        rel="stylesheet">
+    <script src="https://lf3-cdn-tos.bytecdntp.com/cdn/expire-1-M/jquery/3.6.0/jquery.min.js"
+        type="application/javascript"></script>
+    <script src="https://lf6-cdn-tos.bytecdntp.com/cdn/expire-1-M/popper.js/1.16.0/umd/popper.min.js"
+        type="application/javascript"></script>
+    <script src="https://lf9-cdn-tos.bytecdntp.com/cdn/expire-1-M/bootstrap/4.5.3/js/bootstrap.min.js"
+        type="application/javascript"></script>
+    <script src="https://lf6-cdn-tos.bytecdntp.com/cdn/expire-1-M/datatables/1.10.18/js/jquery.dataTables.min.js"
+        type="application/javascript"></script>
+    <script src="https://lf3-cdn-tos.bytecdntp.com/cdn/expire-1-M/datatables/1.10.18/js/dataTables.bootstrap4.min.js"
+        type="application/javascript"></script>
+    <script src="https://lf3-cdn-tos.bytecdntp.com/cdn/expire-1-M/datatables/1.10.18/js/dataTables.bootstrap.min.js"
+        type="application/javascript"></script>
+    <script src="https://lf26-cdn-tos.bytecdntp.com/cdn/expire-1-M/vue/2.6.14/vue.min.js"
+        type="application/javascript"></script>
+    <script src="https://lf3-cdn-tos.bytecdntp.com/cdn/expire-1-M/axios/0.26.0/axios.min.js"
+        type="application/javascript"></script>
+
+    <link href="https://lf3-cdn-tos.bytecdntp.com/cdn/expire-1-M/bootstrap/4.5.3/css/bootstrap.min.css" type="text/css"
+        rel="stylesheet" />
+    <link href="https://lf3-cdn-tos.bytecdntp.com/cdn/expire-1-M/font-awesome/4.7.0/css/font-awesome.min.css"
+        type="text/css" rel="stylesheet" />
+    <link href="https://lf26-cdn-tos.bytecdntp.com/cdn/expire-1-M/datatables/1.10.18/css/dataTables.bootstrap4.min.css"
+        type="text/css" rel="stylesheet" />
+
+    <style>
+        .progress-bar-container {
+            width: 100%;
+            height: 100%;
+            position: relative;
+        }
+
+        .progress-bar {
+            height: 100%;
+            position: absolute;
+            top: 0;
+            left: 0;
+        }
+
+        .progress-bar-text {
+            position: relative;
+            z-index: 1;
+            padding-left: 5px;
+            color: black;
+            white-space: nowrap;
+        }
+    </style>
 </head>
 
 <body class="fixed-nav sticky-footer bg-dark" id="page-top">
     <div id="app">
         <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top" id="mainNav">
-            <a class="navbar-brand" href="/index">gpuview dashboard</a> 
-            <span class="mx-sm-3 text-white">{{update_time}}</span> 
+            <a class="navbar-brand" href="/index">gpuview dashboard</a>
+            <span class="mx-sm-3 text-white">{{update_time}}</span>
             <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse"
                 data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false"
                 aria-label="Toggle navigation">
@@ -28,15 +68,15 @@
             </button>
             <div class="collapse navbar-collapse" id="navbarResponsive">
                 <ul class="navbar-nav navbar-sidenav" id="exampleAccordion">
-                    <li class="nav-item" data-toggle="tooltip" data-placement="right" title="Table">
+                    <li class="nav-item">
                         <!-- 添加按钮和输入框 -->
                         <form class="form-inline my-2 my-lg-0">
                             <div class="input-group">
                                 <input v-model="refreshInterval" type="number" class="form-control mr-sm-2"
                                     placeholder="Refresh interval (seconds)">
                                 <button class="btn btn-outline-success my-2 my-sm-0" type="button"
-                                    @click="startAutoRefresh">
-                                    Start Refresh
+                                    @click="startAutoRefresh" data-toggle="tooltip" data-placement="right" title="重设时间">
+                                    <i class="fa fa-refresh" aria-hidden="true"></i>
                                 </button>
                             </div>
                         </form>
@@ -49,14 +89,14 @@
                 <div class="row">
                     <template v-for="gpustat in gpustats">
                         <template v-for="gpu in gpustat.gpus">
-                            <div :key="gpu.index" class="col-xl-3 col-md-4 col-sm-6 mb-3">
+                            <div :key="gpustat.hostname + '-' + gpu.index" class="col-xl-3 col-md-4 col-sm-6 mb-3">
                                 <div class="card text-white" :class="gpu.flag || ''">
                                     <div class="card-body">
                                         <div class="float-left">
                                             <div class="card-body-icon">
                                                 <i class="fa fa-server"></i> <b>{{ gpustat.hostname || '-' }}</b>
                                             </div>
-                                            <div>[{{ gpu.index || '' }}] {{ gpu.name || '-' }}</div>
+                                            <div>[{{ gpu.index }}] {{ gpu.name || '-' }}</div>
                                         </div>
                                     </div>
                                     <div class="card-footer text-white clearfix small z-1">
@@ -105,22 +145,34 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <template v-for="gpustat in gpustats" :key="gpustat.hostname">
+                                    <template v-for="gpustat in gpustats">
                                         <tr v-for="(gpu, gpuIndex) in gpustat.gpus"
                                             :key="gpustat.hostname + '-' + (gpu.index !== undefined ? gpu.index : gpuIndex)">
                                             <td v-if="gpuIndex === 0" :rowspan="gpustat.gpus.length">{{ gpustat.hostname
                                                 ||
-                                                '-' }}</td>
-                                            <td>[{{ gpu.index !== undefined ? gpu.index : '' }}] {{ gpu.name || '-' }}
+                                                '-' }}
+                                            </td>
+                                            <td>
+                                                [{{ gpu.index !== undefined ? gpu.index : '' }}] {{ gpu.name || '-' }}
+                                                <span v-if="isMemoryExceeded(gpu)" class="badge badge-danger"
+                                                    data-toggle="tooltip" data-placement="right" title="可能卡内存"><i
+                                                        class="fa fa-exclamation-triangle" aria-hidden="true"></i>
+
+                                                </span>
                                             </td>
                                             <td>{{ gpu['temperature.gpu'] !== undefined ? gpu['temperature.gpu'] : '-'
                                                 }}&#8451;</td>
                                             <td>{{ gpu['utilization.gpu'] !== undefined ? gpu['utilization.gpu'] : '-'
                                                 }}%
                                             </td>
-                                            <td>
-                                                {{ gpu.memory !== undefined ? gpu.memory : '-' }}%
-                                                ({{ gpu['memory.used'] || '' }}/{{ gpu['memory.total'] || '-' }})
+                                            <td
+                                                :style="{ background: `linear-gradient(to right, ${getColor(gpu.memory)} ${gpu.memory}%, #fff ${gpu.memory}%)` }">
+                                                <div class="progress-bar-container">
+                                                    <div class="progress-bar-text">
+                                                        {{ gpu.memory !== undefined ? gpu.memory : '-' }}%
+                                                        ({{ gpu['memory.used'] || 0 }}/{{ gpu['memory.total'] || '-' }})
+                                                    </div>
+                                                </div>
                                             </td>
                                             <td>
                                                 {{ gpu['power.draw'] !== undefined ? gpu['power.draw'] : '-' }} / {{
@@ -138,8 +190,10 @@
                 <footer class="sticky-footer">
                     <div class="container">
                         <div class="text-center text-white">
-                            <small>Thx &nbsp<a target="_blank" href="https://github.com/fgaim/gpuview">gpuview</a> © 2018</small><br>
-                            <small>Vue & Flask version By Jysir &nbsp<a target="_blank" href="https://github.com/bei9/gpuview-flask">gpuview-flask</a> © 2024</small>
+                            <small>Thx &nbsp<a target="_blank" href="https://github.com/fgaim/gpuview">gpuview</a> ©
+                                2018</small><br>
+                            <small>Vue & Flask version By Jysir &nbsp<a target="_blank"
+                                    href="https://github.com/bei9/gpuview-flask">gpuview-flask</a> © 2024</small>
                         </div>
                     </div>
                 </footer>
@@ -148,11 +202,17 @@
     </div>
 
     <script>
+        $('[data-toggle="tooltip"]').tooltip()
+
+        // $(function () {
+        //     $('[data-toggle="tooltip"]').tooltip()
+        // })
         new Vue({
             el: '#app',
             data: {
                 refreshInterval: 2, // 默认刷新间隔为10秒
                 autoRefreshTimer: null, // 自动刷新定时器
+
                 gpustats: [
                     {
                         hostname: 'host1',
@@ -208,6 +268,7 @@
             },
             created() {
                 this.fetchData();
+
             },
             methods: {
                 fetchData() {
@@ -220,6 +281,8 @@
                         .catch(error => {
                             console.error("There was an error fetching the GPU stats:", error);
                         });
+                    $('[data-toggle="tooltip"]').tooltip()
+
                 },
                 startAutoRefresh() {
                     // 停止之前的定时器
@@ -231,15 +294,34 @@
                     this.autoRefreshTimer = setInterval(() => {
                         this.fetchData();
                     }, this.refreshInterval * 1000);
+                },
+                getColor(percentage) {
+                    if (percentage < 25) {
+                        return '#28a745'; // 
+                    } else if (percentage < 50) {
+                        return '#17a2b8'; // 
+                    } else if (percentage < 75) {
+                        return '#ffc107';
+                    } else {
+                        return '#dc3545'; // 
+                    }
+                },
+                isMemoryExceeded(gpu) {
+                    if (!Array.isArray(gpu.processes)) {
+                        return false;
+                    }
+
+                    const totalProcessMemory = gpu.processes.reduce((sum, process) => {
+                        return sum + (process.gpu_memory_usage || 0);
+                    }, 0);
+                    const memoryUsed = gpu["memory.used"];
+                    const memoryDifference = Math.abs(memoryUsed - totalProcessMemory);
+                    return memoryDifference > 400;
                 }
             }
         });
     </script>
-    <script src="https://cdn.bootcdn.net/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
-    <script src="https://cdn.bootcdn.net/ajax/libs/twitter-bootstrap/4.0.0/js/bootstrap.min.js"></script>
-    <script src="https://cdn.bootcdn.net/ajax/libs/datatables/1.10.16/js/jquery.dataTables.min.js"></script>
-    <script src="https://cdn.bootcdn.net/ajax/libs/datatables/1.10.16/js/dataTables.bootstrap4.min.js"></script>
-    <script src="https://cdn.bootcdn.net/ajax/libs/datatables/1.10.16/js/dataTables.bootstrap.min.js"></script>
+
 </body>
 
 </html>
