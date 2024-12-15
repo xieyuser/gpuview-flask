@@ -118,7 +118,7 @@ To aggregate the stats of multiple machines, they can be registered to one dashb
 Register a host to monitor as follows:
 
 ```
-$ gpuview add --url <ip:port> --name <name>
+$ gpuview add --url <http://ip:port> --name <name>
 ```
 
 Remove a registered host as follows:
